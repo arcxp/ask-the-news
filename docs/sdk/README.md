@@ -77,11 +77,7 @@ const { data, error } = await client.queryJson({
 if (data) {
   console.log(data.answer);
   console.log(`Status: ${data.status}`); // "answered" | "unanswered" | "rejected"
-  console.log(`Sources: ${data.count} articles`);
-
-  for (const article of data.results) {
-    console.log(`- ${article.headline} (score: ${article.score})`);
-  }
+  console.log(`Sources: ${data.sources?.length ?? 0}`);
 
   if (data.follow_up_questions) {
     console.log("Follow-ups:", data.follow_up_questions);
@@ -136,8 +132,6 @@ if (result.stream) {
 }
 ```
 
-> **Note:** `answer_complete` is deprecated and superseded by `generation_complete`, which fires for every outcome and carries `status` plus inline `citations`.
-
 ### Scoping a query to sections
 
 Pass `filters.sections.include` (up to 5 section paths, each starting with `/`) to restrict retrieval to a subset of your site:
@@ -152,7 +146,7 @@ const { data } = await client.queryJson({
 
 ### Sources and citations
 
-`sources` is a single, score-ordered list of every retrieved source — articles and videos — as a discriminated union keyed on `source_type`. It supersedes the legacy `results` and `video_sources` fields (which remain populated during the deprecation window). `citations` maps each `[N]` marker in `answer` to a source by `document_id`.
+`sources` is a single, score-ordered list of every retrieved source — articles and videos — as a discriminated union keyed on `source_type`. `citations` maps each `[N]` marker in `answer` to a source by `document_id`.
 
 ```ts
 const { data } = await client.queryJson({
