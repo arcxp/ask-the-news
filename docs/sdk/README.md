@@ -191,6 +191,7 @@ const { data } = await client.submitFeedback({
   website: "my-site",
   feedback: "positive", // "positive" | "negative"
   feedback_text: "This answer was helpful.", // optional
+  thread_token: threadToken, // from the rated turn; tokenless feedback is deprecated
 });
 
 if (data?.recorded) {
@@ -213,16 +214,27 @@ if (data) {
 }
 ```
 
+### Get article questions
+
+Fetch the active curated questions for a specific article (site-wide questions ride on `getSettings()` as `active_questions`):
+
+```ts
+const { data } = await client.getArticleActiveQuestions("ARTICLE_DOCUMENT_ID", "my-site");
+
+for (const question of data?.questions ?? []) {
+  console.log(question.text);
+}
+```
+
 ### Using the generated types
 
 All request and response types are exported for use in your application:
 
 ```ts
-import type { components, operations } from "@arcxp/ask-the-news-sdk";
-
-type QueryRequest = components["schemas"]["QueryRequest"];
-type StreamEvent = components["schemas"]["QueryStreamEvent"];
+import type { QueryRequest, QueryStreamEvent } from "@arcxp/ask-the-news-sdk";
 ```
+
+The raw generated `components` / `operations` maps from the OpenAPI spec are also exported for anything not aliased. Note: internal schema names carry an `Api` prefix in the generated map (e.g. `components["schemas"]["ApiQueryRequest"]`).
 
 ---
 
@@ -243,11 +255,33 @@ if (error) {
 }
 ```
 
----
+### Thread errors (follow-up queries)
 
-## Rate limiting
+Follow-up queries (those sent with `thread_token`) can receive three additional error responses. For the 409/410 responses the `detail` is a nested object `{ message, code }` rather than a plain string (404 keeps the standard string `detail`):
 
-The API enforces a limit of **120 requests per minute**. Build in retry logic or request queuing if your integration may approach this limit.
+| HTTP status | `detail.code` | Meaning | Suggested action |
+| --- | --- | --- | --- |
+| `404` | — | Thread does not exist | Start a new conversation |
+| `409` | `thread_token_stale` | A newer turn already exists; the token presented is not the latest | Retry with the most recent `thread_token` |
+| `410` | `thread_token_expired` | Thread expired (60 minutes since the last turn); no more follow-ups accepted; existing answers can still receive feedback | Start a new conversation |
+
+```ts
+const { error, response } = await client.queryJson({
+  query: "Follow-up question?",
+  website: "my-site",
+  thread_token: previousToken,
+});
+
+if (error) {
+  const detail = error.detail;
+  if (typeof detail === "object" && detail !== null && "message" in detail) {
+    // Thread error — detail is { message: string, code: string }
+    console.error(`Thread error (${response.status}): ${(detail as { message: string }).message}`);
+  } else {
+    console.error(`HTTP ${response.status}: ${detail}`);
+  }
+}
+```
 
 ---
 
@@ -259,3 +293,4 @@ The API enforces a limit of **120 requests per minute**. Build in retry logic or
 | `queryStream(body)` | `POST /api/v1/query` | Run a query; returns an SSE stream of typed events |
 | `submitFeedback(body)` | `POST /api/v1/query/feedback` | Submit positive/negative feedback for a query response |
 | `getSettings(website)` | `GET /api/v1/settings` | Get delivery settings for a site (sections, active questions) |
+| `getArticleActiveQuestions(articleId, website)` | `GET /api/v1/articles/{article_id}/questions` | Get the active curated questions for one article |

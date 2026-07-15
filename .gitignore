@@ -6,16 +6,9 @@ dist/
 dist-lib/
 *.tsbuildinfo
 
-# Build-time generated: encrypted ATN token (see apps/demo/scripts/encrypt-token.mjs)
-apps/demo/src/lib/encrypted-token.ts
-
-# Playwright
-test-results/
-playwright-report/
-blob-report/
-
 # Environment
 .env
+.env.local
 
 # IDE
 .vscode/

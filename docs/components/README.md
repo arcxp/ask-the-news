@@ -95,7 +95,7 @@ For fully custom UIs that reuse the data and streaming logic without the built-i
 | --- | --- | --- |
 | `useAskConversation` | Manages the full conversation: submitting queries, streaming answers, and thread continuity | `AskConversation`, `QuestionsStatus` |
 | `useAtnClient` | Builds the configured SDK client from provider context | — |
-| `useActiveQuestions` | Fetches the active/suggested questions list from settings | `ActiveQuestions`, `ActiveQuestion` |
+| `useActiveQuestions` | Fetches the active/suggested questions — site-wide from settings, or scoped to one article via the `articleId` option | `ActiveQuestions`, `ActiveQuestion` |
 | `useQuestionAnswerStream` | Lower-level single question-to-answer SSE stream | `AnswerStreamStatus` |
 
 ### Configuration types

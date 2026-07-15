@@ -56,7 +56,7 @@ Both packages require **Node >= 22**.
 
 ## Running the demo app
 
-[`apps/demo`](apps/demo) is a demo newsroom app that shows both packages in action: the Ask experience, article widgets, search, and stories. It is dev-only and runs off the Vite dev server.
+[`apps/demo`](apps/demo) is a minimal demo app showing how the packages are wired together: a single page rendering `<AskProvider>` + `<AskChat/>`. It is dev-only and runs off the Vite dev server.
 
 **Prerequisites:** Node >= 22 and the `.npmrc` auth above (the repo's `.npmrc` reads `NPM_GITHUB_TOKEN` from your environment).
 
@@ -65,21 +65,13 @@ npm install       # installs the demo and the published @arcxp packages
 npm run dev       # starts the demo on http://localhost:3000
 ```
 
-Point the demo at your Ask The News deployment with these environment variables:
+Point the demo at your Ask The News deployment with these environment variables (e.g. via `apps/demo/.env.local` or real environment variables):
 
 | Variable | Description | Example |
 | --- | --- | --- |
 | `VITE_ATN_BASE_URL` | API base URL | `https://myorg-config-sandbox.api.arc-cdn.net/ask` |
 | `VITE_ATN_WEBSITE` | Site identifier | `my-site` |
-
-Without these set, the demo falls back to a manual credential entry gate on first load.
-
-**Testing:**
-
-```bash
-npm test                               # unit tests (Vitest)
-npm run test:e2e -w arc-ask-demo       # Playwright end-to-end, fully network-mocked
-```
+| `VITE_ATN_API_KEY` | Site-scoped API key (sent as the `X-Api-Key` header) | (your site's API key) |
 
 ---
 
