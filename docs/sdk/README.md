@@ -168,18 +168,12 @@ if (data?.sources) {
 }
 
 // Resolve each inline [N] citation marker to its source.
-// Video citations also carry chunk_index, start_time, and end_time
-// for deep-link seeking.
 for (const citation of data?.citations ?? []) {
-  if (citation.source_type === "video") {
-    console.log(
-      `[${citation.position}] -> video ${citation.document_id} @ ${citation.start_time}`,
-    );
-  } else {
-    console.log(`[${citation.position}] -> article ${citation.document_id}`);
-  }
+  console.log(`[${citation.position}] -> ${citation.document_id}`);
 }
 ```
+
+Citations are on by default. Send `inline_citations: false` with the query to receive a plain-prose answer with no `[N]` markers and no `citations` mapping.
 
 ### Submit feedback
 
@@ -191,7 +185,7 @@ const { data } = await client.submitFeedback({
   website: "my-site",
   feedback: "positive", // "positive" | "negative"
   feedback_text: "This answer was helpful.", // optional
-  thread_token: threadToken, // from the rated turn; tokenless feedback is deprecated
+  thread_token: threadToken, // returned by the rated turn
 });
 
 if (data?.recorded) {
@@ -228,19 +222,19 @@ for (const question of data?.questions ?? []) {
 
 ### Using the generated types
 
-All request and response types are exported for use in your application:
+All request and response types are exported with the `Api` prefix, matching the OpenAPI schema names:
 
 ```ts
-import type { QueryRequest, QueryStreamEvent } from "@arcxp/ask-the-news-sdk";
+import type { ApiQueryRequest, ApiQueryStreamEvent } from "@arcxp/ask-the-news-sdk";
 ```
 
-The raw generated `components` / `operations` maps from the OpenAPI spec are also exported for anything not aliased. Note: internal schema names carry an `Api` prefix in the generated map (e.g. `components["schemas"]["ApiQueryRequest"]`).
+The raw generated `components` / `operations` maps from the OpenAPI spec are also exported.
 
 ---
 
 ## Error handling
 
-All methods return `{ data, error, response }` following the [openapi-fetch](https://openapi-ts.dev/openapi-fetch/) pattern. On success, `data` is populated and `error` is `undefined`. On failure, `error` contains the API error response and `data` is `undefined`.
+All methods return `{ data, error, response }` following the [openapi-fetch](https://openapi-ts.dev/openapi-fetch/) pattern. On success, `data` is populated and `error` is `undefined`. On failure, `error` carries a human-readable `detail` plus a machine-readable `code` for branching (snake_case, e.g. `not_found`, `bad_request`), and `data` is `undefined`.
 
 ```ts
 const { data, error, response } = await client.queryJson({
@@ -249,7 +243,7 @@ const { data, error, response } = await client.queryJson({
 });
 
 if (error) {
-  console.error(`HTTP ${response.status}: ${error.detail}`);
+  console.error(`HTTP ${response.status} (${error.code}): ${error.detail}`);
 } else {
   console.log(data.answer);
 }
@@ -257,29 +251,27 @@ if (error) {
 
 ### Thread errors (follow-up queries)
 
-Follow-up queries (those sent with `thread_token`) can receive three additional error responses. For the 409/410 responses the `detail` is a nested object `{ message, code }` rather than a plain string (404 keeps the standard string `detail`):
+Follow-up queries (those sent with `thread_token`) can receive three additional error responses, each with a specific `code`:
 
-| HTTP status | `detail.code` | Meaning | Suggested action |
+| HTTP status | `error.code` | Meaning | Suggested action |
 | --- | --- | --- | --- |
-| `404` | — | Thread does not exist | Start a new conversation |
+| `404` | `not_found` | Thread does not exist | Start a new conversation |
 | `409` | `thread_token_stale` | A newer turn already exists; the token presented is not the latest | Retry with the most recent `thread_token` |
 | `410` | `thread_token_expired` | Thread expired (60 minutes since the last turn); no more follow-ups accepted; existing answers can still receive feedback | Start a new conversation |
 
 ```ts
-const { error, response } = await client.queryJson({
+const { error } = await client.queryJson({
   query: "Follow-up question?",
   website: "my-site",
   thread_token: previousToken,
 });
 
-if (error) {
-  const detail = error.detail;
-  if (typeof detail === "object" && detail !== null && "message" in detail) {
-    // Thread error — detail is { message: string, code: string }
-    console.error(`Thread error (${response.status}): ${(detail as { message: string }).message}`);
-  } else {
-    console.error(`HTTP ${response.status}: ${detail}`);
-  }
+if (error?.code === "thread_token_expired") {
+  // Thread is gone — clear the stored token and start a new conversation.
+} else if (error?.code === "thread_token_stale") {
+  // Another turn was created elsewhere — retry with the newest thread_token.
+} else if (error) {
+  console.error(error.detail);
 }
 ```
 

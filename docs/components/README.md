@@ -49,17 +49,10 @@ Everything below covers optional configuration and lower-level building blocks.
 | --- | --- | --- | --- |
 | `baseUrl` | `string` | Yes | API base URL (e.g. `https://myorg-config-sandbox.api.arc-cdn.net/ask`) |
 | `website` | `string` | Yes | Site identifier (e.g. `my-site`) |
-| `apiKey` | `string` | One of these | Static API key, sent as the `X-Api-Key` header |
-| `resolveApiKey` | `() => string \| Promise<string>` | One of these | Per-request resolver — use this to decrypt or refresh the key on each call |
+| `apiKey` | `string` | Yes | API key, sent as the `X-Api-Key` header |
 
-**Static key:**
 ```tsx
 <AskProvider baseUrl={ATN_BASE_URL} apiKey={ATN_API_KEY} website="my-site">
-```
-
-**Per-request resolver** (for token decryption or refresh flows):
-```tsx
-<AskProvider baseUrl={ATN_BASE_URL} resolveApiKey={() => fetchFreshToken()} website="my-site">
 ```
 
 ---
@@ -101,7 +94,7 @@ For fully custom UIs that reuse the data and streaming logic without the built-i
 | Export | Kind | Description |
 | --- | --- | --- |
 | `AskProvider` | Component | Context wrapper (see above) |
-| `useAskConfig` | Hook | Reads the injected config from context (used internally; exported for advanced cases) |
+| `useAskConfig` | Hook | Reads the config supplied by `<AskProvider>` from context |
 | `AskConfig`, `AskProviderProps` | Types | Shape of the config object and provider props |
 
 ### Shared data types

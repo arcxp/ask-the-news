@@ -13,7 +13,7 @@ This repository hosts documentation and a runnable demo app for two npm packages
 
 ## Which package do I need?
 
-- **Building a React app and want a ready-made UI?** Install `@arcxp/ask-the-news-components`. It includes the SDK internally and gives you a full chat experience in a few lines of JSX. [Get started with components.](docs/components/README.md)
+- **Building a React app and want a ready-made UI?** Install `@arcxp/ask-the-news-components`. It bundles the SDK and gives you a full chat experience in a few lines of JSX. [Get started with components.](docs/components/README.md)
 - **Building a custom UI, using a non-React framework, or need raw API access?** Install `@arcxp/ask-the-news-sdk`. It handles auth, request/response typing, and SSE streaming. [Get started with the SDK.](docs/sdk/README.md)
 
 ---
