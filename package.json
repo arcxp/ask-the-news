@@ -1,0 +1,28 @@
+{
+  "name": "ask-the-news",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Documentation and demo newsroom app for the Arc XP Ask The News experience",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arcxp/ask-the-news.git"
+  },
+  "type": "module",
+  "workspaces": [
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w arc-ask-demo",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-arm64-gnu": "^4.62.2",
+    "@tailwindcss/oxide-linux-arm64-gnu": "^4.3.2",
+    "lightningcss-linux-arm64-gnu": "^1.32.0"
+  }
+}
