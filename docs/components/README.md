@@ -1,6 +1,6 @@
 # @arcxp/ask-the-news-components
 
-React component library for [Ask The News](https://www.arcxp.com/) — drop a conversational, sources-backed news answering experience into any React app. Includes streaming AI answers, inline citations, suggested follow-up questions, and optional ad slots.
+React component library for [Ask The News](https://www.arcxp.com/) — drop a conversational, sources-backed news answering experience into any React app. Includes streaming AI answers, inline citations, and suggested follow-up questions.
 
 This package wraps the [`@arcxp/ask-the-news-sdk`](../sdk/README.md) — you do not need to install the SDK separately.
 
@@ -85,7 +85,6 @@ For teams who want to assemble the layout themselves:
 | `SearchBox` | Component | Composed search entry widget |
 | `SearchInput` | Component | Lower-level auto-growing input with ghost completion. Exported alongside `DEFAULT_DISCLAIMER`. |
 | `AnswerCard` | Component | Renders one streamed answer with hero image, sources drawer, and feedback controls |
-| `AdSlot` | Component | Ad placement slot. Exported with its `AdVariant` type. |
 
 ### 3. Hooks (headless building blocks)
 
@@ -96,7 +95,6 @@ For fully custom UIs that reuse the data and streaming logic without the built-i
 | `useAskConversation` | Manages the full conversation: submitting queries, streaming answers, and thread continuity | `AskConversation`, `QuestionsStatus` |
 | `useAtnClient` | Builds the configured SDK client from provider context | — |
 | `useActiveQuestions` | Fetches the active/suggested questions — site-wide from settings, or scoped to one article via the `articleId` option | `ActiveQuestions`, `ActiveQuestion` |
-| `useQuestionAnswerStream` | Lower-level single question-to-answer SSE stream | `AnswerStreamStatus` |
 
 ### Configuration types
 
