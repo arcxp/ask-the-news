@@ -76,5 +76,5 @@ Point the demo at your Ask The News deployment with these environment variables 
 ---
 
 ## License
-
 Governed by the [Arc XP SDK License Agreement](LICENSE); use requires an active Arc XP subscription.
+
