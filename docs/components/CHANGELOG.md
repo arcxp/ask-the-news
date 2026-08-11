@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [1.3.0] - 2026-08-10
+
+### Changed
+- The bundle is **36% smaller** — 388.6 KB → 248.7 KB — after dropping the runtime animation library. Nothing in the public API moved: same exports, same props, same `./styles.css` export, still ES2019.
+- Every animation is now plain CSS: `tw-animate-css` utilities for entrances, ordinary `transition-*` for state changes, and a few `atn-*` `@keyframes` shipped in the stylesheet for the shimmer sweep and the feedback celebration. Reduced motion is honored through `prefers-reduced-motion` media queries instead of a JS hook, so the preference no longer has to be measured at runtime.
+
+### Removed
+- The `motion` (Framer Motion) dependency. Two exit animations went with it: the landing → answer swap and the rotating loading messages now fade in only, with no fade-out. Everything else keeps its behavior — the shimmer, the staggered source cards, the collapsing feedback thumbs and their celebration burst all still animate in and out, and the thumb "pop" now uses an overshooting easing curve in place of a spring.
+- Dead shared-layout code in the sources carousel: the internal `layout` prop on `SourcesCardsCarouselCard` and its `layoutId` wiring were never switched on.
+
+### Fixed
+- Source cards in the carousel now render as `<button type="button">`. They previously fell back to the HTML default of `type="submit"`, so clicking one inside a host `<form>` could submit it.
+
 ## [1.2.0] - 2026-07-21
 
 ### Changed
