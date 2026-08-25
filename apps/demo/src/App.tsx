@@ -5,9 +5,9 @@ function App() {
     // client from this config and exposes it to every component/hook below it.
     return (
         <AskProvider
-            baseUrl={import.meta.env.VITE_ATN_BASE_URL}
-            website={import.meta.env.VITE_ATN_WEBSITE || "my-site"}
-            apiKey={import.meta.env.VITE_ATN_API_KEY}
+            baseUrl={import.meta.env.VITE_ARC_ASK_BASE_URL}
+            website={import.meta.env.VITE_ARC_ASK_WEBSITE || "my-site"}
+            apiKey={import.meta.env.VITE_ARC_ASK_API_KEY}
         >
             <AskChat />
         </AskProvider>

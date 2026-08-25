@@ -69,9 +69,9 @@ Point the demo at your Ask The News deployment with these environment variables 
 
 | Variable | Description | Example |
 | --- | --- | --- |
-| `VITE_ATN_BASE_URL` | API base URL | `https://myorg-config-sandbox.api.arc-cdn.net/ask` |
-| `VITE_ATN_WEBSITE` | Site identifier | `my-site` |
-| `VITE_ATN_API_KEY` | Site-scoped API key (sent as the `X-Api-Key` header) | (your site's API key) |
+| `VITE_ARC_ASK_BASE_URL` | API base URL | `https://myorg-config-sandbox.api.arc-cdn.net/ask` |
+| `VITE_ARC_ASK_WEBSITE` | Site identifier | `my-site` |
+| `VITE_ARC_ASK_API_KEY` | Site-scoped API key (sent as the `X-Api-Key` header) | (your site's API key) |
 
 ---
 
