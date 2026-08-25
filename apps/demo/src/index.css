@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "shadcn/tailwind.css";
 
 /* The demo compiles one stylesheet for itself AND the component library:
    scanning the installed package's built output here (instead of importing
@@ -47,15 +46,52 @@
 }
 
 :root {
-    /* Layout vars consumed by the library's fixed-bottom Ask bar. The demo has
-       no bottom tab bar, so only the device safe-area is reserved. */
-    --tab-bar-height: 0px;
-    /* Height of the active sticky Ask bar (0 unless mounted via fixedToBottom). */
-    --ask-bar-height: 0px;
+    --arc-ask-tab-bar-height: 0px;
+    --arc-ask-ask-bar-height: 0px;
     /* Combined safe-area + tab bar reservation for fixed-bottom elements. */
-    --bottom-chrome: calc(var(--tab-bar-height) + env(safe-area-inset-bottom));
+    --arc-ask-bottom-chrome: calc(var(--arc-ask-tab-bar-height) + env(safe-area-inset-bottom));
     /* Padding inside the Ask sticky bar. */
-    --sticky-bar-pb: max(env(safe-area-inset-bottom), 0.75rem);
+    --arc-ask-sticky-bar-pb: max(env(safe-area-inset-bottom), 0.75rem);
+    --arc-ask-success: var(--success);
+    --arc-ask-background: var(--background);
+    --arc-ask-muted-foreground: var(--muted-foreground);
+
+    color-scheme: light;
+
+    --arc-ask-ring-invalid: color-mix(in oklab, var(--destructive) 20%, transparent);
+    --arc-ask-destructive-surface: var(--destructive);
+    --arc-ask-destructive-surface-subtle: color-mix(in oklab, var(--destructive) 10%, transparent);
+    --arc-ask-outline-border: var(--border);
+    --arc-ask-outline-surface: var(--background);
+    --arc-ask-outline-surface-hover: var(--accent);
+    --arc-ask-textarea-surface: transparent;
+    --arc-ask-ghost-surface-hover: var(--accent);
+    --arc-ask-media-surface: color-mix(in oklab, black 10%, transparent);
+    --arc-ask-edge-border: transparent;
+    --arc-ask-edge-shadow-near: rgb(0 0 0 / 0.04);
+    --arc-ask-edge-shadow-far: rgb(0 0 0 / 0.06);
+    --arc-ask-edge-shadow-far-strong: rgb(0 0 0 / 0.08);
+    --arc-ask-z-anchored: 30;
+    --arc-ask-z-modal: 1000;
+    --arc-ask-answer-reserve: 20rem;
+}
+
+@supports (color: light-dark(#000, #fff)) {
+    :root {
+        --arc-ask-ring-invalid: light-dark(color-mix(in oklab, var(--destructive) 20%, transparent), color-mix(in oklab, var(--destructive) 40%, transparent));
+        --arc-ask-destructive-surface: light-dark(var(--destructive), color-mix(in oklab, var(--destructive) 60%, transparent));
+        --arc-ask-destructive-surface-subtle: light-dark(color-mix(in oklab, var(--destructive) 10%, transparent), color-mix(in oklab, var(--destructive) 20%, transparent));
+        --arc-ask-outline-border: light-dark(var(--border), var(--input));
+        --arc-ask-outline-surface: light-dark(var(--background), color-mix(in oklab, var(--input) 30%, transparent));
+        --arc-ask-outline-surface-hover: light-dark(var(--accent), color-mix(in oklab, var(--input) 50%, transparent));
+        --arc-ask-textarea-surface: light-dark(transparent, color-mix(in oklab, var(--input) 30%, transparent));
+        --arc-ask-ghost-surface-hover: light-dark(var(--accent), color-mix(in oklab, var(--accent) 50%, transparent));
+        --arc-ask-media-surface: light-dark(color-mix(in oklab, black 10%, transparent), color-mix(in oklab, white 10%, transparent));
+        --arc-ask-edge-border: light-dark(transparent, var(--border));
+        --arc-ask-edge-shadow-near: light-dark(rgb(0 0 0 / 0.04), transparent);
+        --arc-ask-edge-shadow-far: light-dark(rgb(0 0 0 / 0.06), transparent);
+        --arc-ask-edge-shadow-far-strong: light-dark(rgb(0 0 0 / 0.08), transparent);
+    }
 }
 
 body {
@@ -63,7 +99,7 @@ body {
     min-width: 320px;
     min-height: 100vh;
     min-height: 100dvh;
-    padding-bottom: calc(var(--bottom-chrome) + var(--ask-bar-height));
+    padding-bottom: calc(var(--arc-ask-bottom-chrome) + var(--arc-ask-ask-bar-height));
 }
 
 @theme inline {
@@ -101,6 +137,7 @@ body {
 }
 
 .dark {
+    color-scheme: dark;
     --background: oklch(0.2393 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.2727 0 0);
@@ -143,4 +180,60 @@ body {
     &::-webkit-scrollbar {
         display: none;
     }
+}
+
+@keyframes arc-ask-shimmer {
+    from {
+        background-position: 100% center;
+    }
+    to {
+        background-position: 0% center;
+    }
+}
+
+@keyframes arc-ask-feedback-bloom {
+    0% {
+        scale: 1.2;
+        opacity: 0;
+    }
+    50% {
+        scale: 1.8;
+        opacity: 0.3;
+    }
+    100% {
+        scale: 1.2;
+        opacity: 0;
+    }
+}
+
+@keyframes arc-ask-feedback-ring {
+    from {
+        scale: 1;
+        opacity: 0.8;
+    }
+    to {
+        scale: 1.5;
+        opacity: 0;
+    }
+}
+
+@keyframes arc-ask-feedback-particle {
+    0% {
+        translate: 50% 50%;
+        scale: 0;
+        opacity: 0;
+    }
+    50% {
+        scale: 1;
+        opacity: 1;
+    }
+    100% {
+        translate: var(--arc-ask-particle-x) var(--arc-ask-particle-y);
+        scale: 0;
+        opacity: 0;
+    }
+}
+
+@utility arc-ask-shimmer {
+    animation: arc-ask-shimmer var(--arc-ask-shimmer-duration, 2s) linear infinite;
 }
